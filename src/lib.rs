@@ -4,21 +4,17 @@ mod opts;
 mod wkwebview;
 mod cfnetwork;
 
-// Folosim o funcție constructor nativă compatibilă cu Objective-C / iOS
-#[link_section = "__DATA,__mod_init_func"]
-#[used]
-pub static INIT: extern "C" fn() = {
-    extern "C" fn init() {
-        // Dezactivează temporar rând pe rând pentru a vedea care provoacă crash-ul:
-        
-        // unsafe { protocol::init_moonwave_url_protocol(); }
-        
-        // if opts::USE_PARTYHUB {
-        //     unsafe {
-        //         wkwebview::init_moonwave_webview_delegate();
-        //         cfnetwork::init_moonwave_cfnetwork_hook();
-        //     }
-        // }
+// Punct de intrare standard exportat pe care loader-ul îl poate apela în siguranță
+#[no_mangle]
+pub extern "C" fn moonwave_entry() {
+    unsafe {
+        protocol::init_moonwave_url_protocol();
     }
-    init
-};
+
+    if opts::USE_PARTYHUB {
+        unsafe {
+            wkwebview::init_moonwave_webview_delegate();
+            cfnetwork::init_moonwave_cfnetwork_hook();
+        }
+    }
+}

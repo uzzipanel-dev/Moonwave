@@ -1,0 +1,25 @@
+name: Build Moonwave iOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - name: Build Moonwave
+        run: cargo build --release --target aarch64-apple-ios
+
+      - name: Upload Dylib
+        uses: actions/upload-artifact@v4
+        with:
+          name: libmoonwave-dylib
+          path: target/aarch64-apple-ios/release/libmoonwave.dylib

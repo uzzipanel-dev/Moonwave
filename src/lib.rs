@@ -9,16 +9,16 @@ mod cfnetwork;
 #[used]
 pub static INIT: extern "C" fn() = {
     extern "C" fn init() {
-        unsafe {
-            protocol::init_moonwave_url_protocol();
-        }
-
-        if opts::USE_PARTYHUB {
-            unsafe {
-                wkwebview::init_moonwave_webview_delegate();
-                cfnetwork::init_moonwave_cfnetwork_hook();
-            }
-        }
+        // Dezactivează temporar rând pe rând pentru a vedea care provoacă crash-ul:
+        
+        // unsafe { protocol::init_moonwave_url_protocol(); }
+        
+        // if opts::USE_PARTYHUB {
+        //     unsafe {
+        //         wkwebview::init_moonwave_webview_delegate();
+        //         cfnetwork::init_moonwave_cfnetwork_hook();
+        //     }
+        // }
     }
     init
 };

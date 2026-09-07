@@ -1,21 +1,24 @@
 #![allow(unexpected_cfgs)]
-use ctor::ctor;
 mod protocol;
 mod opts;
 mod wkwebview;
 mod cfnetwork;
 
-// CLEAN CODE WOW
-#[ctor]
-fn main() {
-    unsafe {
-        protocol::init_moonwave_url_protocol();
-    }
-
-    if opts::USE_PARTYHUB {
+// Folosim o funcție constructor nativă compatibilă cu Objective-C / iOS
+#[link_section = "__DATA,__mod_init_func"]
+#[used]
+pub static INIT: extern "C" fn() = {
+    extern "C" fn init() {
         unsafe {
-            wkwebview::init_moonwave_webview_delegate();
-            cfnetwork::init_moonwave_cfnetwork_hook();
+            protocol::init_moonwave_url_protocol();
+        }
+
+        if opts::USE_PARTYHUB {
+            unsafe {
+                wkwebview::init_moonwave_webview_delegate();
+                cfnetwork::init_moonwave_cfnetwork_hook();
+            }
         }
     }
-}
+    init
+};
